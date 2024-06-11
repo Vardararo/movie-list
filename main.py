@@ -41,7 +41,10 @@ class Base(DeclarativeBase):
 
 # Database used to store movie data
 db = SQLAlchemy(model_class=Base)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URI", "sqlite:///movie_coll.db")
+if os.environ.get("LOCAL") == "True":
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///movie_coll.db"
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URI")
 db.init_app(app)
 
 class Movie(db.Model):
