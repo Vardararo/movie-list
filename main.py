@@ -54,8 +54,8 @@ class Movie(db.Model):
     review: Mapped[str] = mapped_column(String(250), nullable=True)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
 
-with app.app_context():
-    db.create_all()
+# with app.app_context():
+#     db.create_all()
 
 # #with app.app_context():
 # #    Movie.query.filter(Movie.id == 3).delete()
