@@ -33,7 +33,7 @@ A web application to manage and review your movie collection. The application us
     - Create a `.env` file in the root directory.
     - Add your TMDB API key to the `.env` file:
       ```sh
-      DB_HEADER=<Your_TMDB_API_Key>
+      TMDB_API_KEY=<Your_TMDB_API_Key>
       ```
 
 5. Initialize the database:
