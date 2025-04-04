@@ -89,6 +89,21 @@ movie-collection-app/
 │   └── images/
 └── README.md
 ```
+## Dependencies:
+- Flask: Web framework for building the application.
+- Flask-Bootstrap: For integrating Bootstrap with Flask templates.
+- Flask-SQLAlchemy: For database management.
+- SQLAlchemy: ORM for database interactions.
+- Flask-WTF: For creating and validating forms.
+- Requests: For making HTTP requests to the TMDB API.
+- Python-dotenv: For loading environment variables from a .env file.
+
+## Environment Variables:
+- APP_CONFIG: Secret key for Flask application.
+- TMDB_API_KEY: API key for accessing TMDB.
+- DB_URI: URI for the remote database (if not using SQLite).
+- LOCAL: Set to "True" to use a local SQLite database.
+- DB_HEADER: Authorization header for database requests.
 
 ## License
 
