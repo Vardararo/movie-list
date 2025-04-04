@@ -13,7 +13,6 @@ html {
 body {
   margin: 0;
   padding: 0;
-
   width: 100%;
   height: 100%;
   position: relative;
@@ -23,7 +22,7 @@ body {
   background: url("assets/markus-spiske-unsplash.webp");
   background-repeat: repeat;
   background-size: cover;
-  /*adjust s value for speed*/
+  /*adjusts value for speed*/
   animation: animatedBackground 300s linear infinite;
   z-index: -1;
   background-attachment: fixed;
@@ -279,7 +278,7 @@ p.overview {
 	cursor: default;
 	height: 3.5em;
 	left: 0;
-	position: relative;
+	position: fixed;
 	text-align: center;
 	width: 100%;
 	font-weight: 550;
@@ -297,5 +296,6 @@ p.overview {
 }
 .socials {
   float: right;
-  padding-right: 10%;
+  position: relative;
+  right: 10%;
 }
