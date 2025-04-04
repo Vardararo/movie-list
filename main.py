@@ -1,3 +1,15 @@
+"""Movie List Application
+
+This Flask-based web application allows users to manage a list of movies they have watched. 
+Users can add movies by searching for them using The Movie Database (TMDB) API, edit movie 
+ratings and reviews, and delete movies from the list. The application uses a SQLite database 
+to store movie data locally or a remote database if configured.
+"""
+
+import os
+from datetime import datetime
+import requests
+from dotenv import load_dotenv
 from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
@@ -6,10 +18,6 @@ from sqlalchemy import Integer, String, Float, Text
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-import requests
-from datetime import datetime
-from dotenv import load_dotenv
-import os
 
 load_dotenv(".env")
 
@@ -31,9 +39,10 @@ class EditForm(FlaskForm):
     review_edit = StringField(label='Your Review', render_kw={"autocomplete":"off"})
     submit = SubmitField("Done")
 
-# Flask Form used to search TMDB using movie title    
+# Flask Form used to search TMDB using movie title
 class FindMovieForm(FlaskForm):
-    title = StringField("Movie Title", validators=[DataRequired()], render_kw={"autocomplete":"off"})
+    title = StringField("Movie Title", validators=[DataRequired()],
+                        render_kw={"autocomplete":"off"})
     submit = SubmitField("Add Movie")
 
 class Base(DeclarativeBase):
@@ -69,13 +78,13 @@ with app.app_context():
 def home():
     collection = db.session.execute(db.select(Movie).order_by(Movie.rating.desc()))
     all_movies = collection.scalars().all()
-    
+
     i = 1
     for movie in all_movies:
         movie.ranking = i
         i += 1
     db.session.commit()
-    
+
     return render_template("index.html", movies = all_movies, copyright_year = year)
 
 # Edit page used for altering the score and review of a movie already in database
@@ -93,17 +102,17 @@ def edit():
             movie.review = form.review_edit.data
             db.session.commit()
         return redirect(url_for('home'))
-    
+
     return render_template("edit.html", movie=movie, form=form, copyright_year = year)
 
 # Function to remove a movie from our database
 @app.route("/delete")
 def delete():
     movie_id = request.args.get("id")
-    movie_to_delete = db.get_or_404(Movie, movie_id)    
+    movie_to_delete = db.get_or_404(Movie, movie_id)
     db.session.delete(movie_to_delete)
     db.session.commit()
-    
+
     return redirect(url_for('home'))
 
 auth = os.environ.get("DB_HEADER")
@@ -119,34 +128,35 @@ def add_movie():
     if form.validate_on_submit():
         movie_title = form.title.data
         url = "https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1"
-        response = requests.get(url, params={"query":movie_title}, headers=headers)
+        response = requests.get(url, params={"query":movie_title}, headers=headers, timeout=15)
         data = response.json()["results"]
         return render_template("select.html", data=data)
-    
+
     return render_template("add.html", form=form, copyright_year = year)
 
 # Function to add the selected movie to the database
 @app.route("/find")
 def find_movie():
     movie_api_id = request.args.get("id")
-    
+
     if movie_api_id:
         movie_url = f"https://api.themoviedb.org/3/movie/{movie_api_id}"
-        response = requests.get(movie_url, params={"language": "en-US"}, headers=headers)
+        response = requests.get(movie_url, params={"language": "en-US"},
+                                headers=headers, timeout=15)
         data = response.json()
-    
+
         new_movie = Movie(
             title = data["original_title"],
             year = data["release_date"].split("-")[0],
             img_url = f"{MOVIE_DB_IMAGE_URL}{data['poster_path']}",
             description = data["overview"]
         )
-    
+
         db.session.add(new_movie)
         db.session.commit()
-    
+
         return redirect(url_for('edit', id=new_movie.id))
-        
+
 
 if __name__ == '__main__':
     app.run(debug=True)
